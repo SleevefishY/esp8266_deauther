@@ -430,9 +430,9 @@ void setup() {
   lcd.setCursor ( 0, 1 );            // go to the 2nd row
   lcd.print("|       I AM       |"); // pad string with spaces for centering
   lcd.setCursor ( 0, 2 );            // go to the third row
-  lcd.print("|     ESP 8266      |"); // pad with spaces for centering
+  lcd.print("|     ESP 8266     |"); // pad with spaces for centering
   lcd.setCursor ( 0, 3 );            // go to the fourth row
-  lcd.print("+     DEAUTHER     +");
+  lcd.print("+    PLAYGROUND    +");
   if(debug) Serial.println("\nPrint complete. Initialization core functionalities...\n");
   
 #ifdef USE_DISPLAY
@@ -543,7 +543,7 @@ void loop() {
     if(input == "scan"){
       startAPScan();
     }
-  if(input == "atatckall"){
+  if(input == "attackall"){
     Serial.println("Scanning all presented APs...");
   startAPScan();
     Serial.println("Done.\n");
@@ -552,10 +552,12 @@ void loop() {
     apScan.selectall();
     Serial.println("Done.\n");
   
-    Serial.println("Starting attack...");
+    Serial.println("Starting deauth attack...");
     Serial.println("\n**********input 'stop' to stop attack***********\n");
-  delay(2000);
-    attack.run();
+    delay(2000);
+    //attack.attacksNames = 1
+    startAttack();
+    attack.start(0);
   }
   if(input == "stop"){
     attack.stop(0);

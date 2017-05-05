@@ -273,11 +273,11 @@ void APScan::select(int num) {
   else selectedSum++;
 }
 void APScan::selectall(){
-    for (int i = 0; i < maxAPScanResults; i++){
+    for (int i = 0; i < results; i++){
        selected[i] = true;
        if (debug) Serial.println("select " + (String)i + " - " + !selected[i]);
   }
-      selectedSum = maxAPScanResults;
+      selectedSum = results;
 }
 
 bool APScan::isSelected(int num) {

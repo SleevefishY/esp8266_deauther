@@ -6,7 +6,6 @@ Attack::Attack() {
 
 void Attack::generate() {
   if (debug) Serial.print("\n generating MACs...");
-
   Mac _randomBeaconMac;
   uint8_t _randomMacBuffer[6];
   beaconAdrs._clear();
@@ -273,7 +272,6 @@ void Attack::_log(int num){
   openLog();
   Serial.println("\n======Logs intercepted======\n\n");
   Serial.println((String)attackNames[num]);
-      Serial.println((String)attackNames[num]);
   for(int a=0;a<apScan.results;a++){
     if(apScan.isSelected(a)){
       Mac _ap;
