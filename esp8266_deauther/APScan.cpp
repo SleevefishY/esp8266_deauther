@@ -7,7 +7,7 @@ APScan::APScan() {
 bool APScan::start() {
   if (debug) {
     Serial.println("starting AP scan...");
-    Serial.println("MAC - Ch - RSSI - Encrypt. - SSID - Hidden");// - Vendor");
+    Serial.println("# -       MAC         - Ch - RSSI - Encrypt. -    SSID     - Hidden");// - Vendor");
   }
   aps._clear();
   for (int i = 0; i < maxAPScanResults; i++) selected[i] = false;
@@ -30,15 +30,15 @@ bool APScan::start() {
       Serial.print(" - ");
       _ap._print();
       Serial.print(" - ");
-      Serial.print(channels[i]);
+      Serial.print(channels[i]+(channels[i]>9? " " : ""));
       Serial.print(" - ");
-      Serial.print(rssi[i]);
+      Serial.print(rssi[i]+" ");
       Serial.print(" - ");
       Serial.print(getEncryption(encryption[i]));
       Serial.print(" - ");
-      Serial.print(names[i]);
+      Serial.print(hidden[i]==0 ?"Visible":"Hidden ");
       Serial.print(" - ");
-      Serial.print(hidden[i]);
+      Serial.print(names[i]);
       //Serial.print(" - ");
       //Serial.print(vendors[i]);
       Serial.println();
@@ -271,6 +271,13 @@ void APScan::select(int num) {
   selected[num] = !selected[num];
   if (selected[num]) selectedSum--;
   else selectedSum++;
+}
+void APScan::selectall(){
+    for (int i = 0; i < maxAPScanResults; i++){
+       selected[i] = true;
+       if (debug) Serial.println("select " + (String)i + " - " + !selected[i]);
+  }
+      selectedSum = maxAPScanResults;
 }
 
 bool APScan::isSelected(int num) {

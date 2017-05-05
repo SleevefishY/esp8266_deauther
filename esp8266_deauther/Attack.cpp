@@ -271,21 +271,24 @@ void Attack::stopAll() {
 
 void Attack::_log(int num){
   openLog();
-  addLog((String)attackNames[num]);
+  Serial.println("\n======Logs intercepted======\n\n");
+  Serial.println((String)attackNames[num]);
+      Serial.println((String)attackNames[num]);
   for(int a=0;a<apScan.results;a++){
     if(apScan.isSelected(a)){
       Mac _ap;
       _ap.setMac(apScan.aps._get(a));
-      addLog(_ap.toString());
+      Serial.println(_ap.toString());
     }
   }
   addLog("-");
   for(int i=0;i<clientScan.results; i++) {
     if(clientScan.getClientSelected(i)) {
-      addLog(clientScan.getClientMac(i).toString());
+      Serial.println(clientScan.getClientMac(i).toString());
     }
   }
   closeLog();
+  Serial.println("======end of log session======");
 }
 
 size_t Attack::getSize(){

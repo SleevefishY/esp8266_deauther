@@ -1,3 +1,4 @@
+
 /*
   ===========================================
        Copyright (c) 2017 Stefan Kremser
@@ -11,6 +12,9 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 #include <FS.h>
+#include <Wire.h> 
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x27,20,4); 
 
 #define resetPin 4 /* <-- comment out or change if you need GPIO 4 for other purposes */
 //#define USE_DISPLAY /* <-- uncomment that if you want to use the display */
@@ -87,7 +91,7 @@ void startWifi() {
   wifi_set_promiscuous_rx_cb(sniffer);
   WiFi.softAP((const char*)settings.ssid.c_str(), (const char*)settings.password.c_str(), settings.apChannel, settings.ssidHidden); //for an open network without a password change to:  WiFi.softAP(ssid);
   Serial.println("SSID     : '" + settings.ssid+"'");
-  Serial.println("Password : '" + settings.password+"'");
+  Serial.println("And I'm not telling ya my password :)");
   Serial.println("-----------------------------------------------");
   if (settings.password.length() < 8) Serial.println("WARNING: password must have at least 8 characters!");
   if (settings.ssid.length() < 1 || settings.ssid.length() > 32) Serial.println("WARNING: SSID length must be between 1 and 32 characters!");
@@ -415,7 +419,21 @@ void setup() {
   if(debug){
     delay(2000);
     Serial.println("\nStarting...\n");
+    Serial.println("\nInitializing LCD...\n");
   }
+  
+  lcd.init();  //initialize the lcd
+  if(debug) Serial.println("\nLCD initialized, printing sample code..\n");
+  lcd.backlight();  //open the backlight 
+  lcd.setCursor ( 0, 0 );            // go to the top left corner
+  lcd.print("+   Hello,world!   +"); // write this string on the top row
+  lcd.setCursor ( 0, 1 );            // go to the 2nd row
+  lcd.print("|       I AM       |"); // pad string with spaces for centering
+  lcd.setCursor ( 0, 2 );            // go to the third row
+  lcd.print("|     ESP 8266      |"); // pad with spaces for centering
+  lcd.setCursor ( 0, 3 );            // go to the fourth row
+  lcd.print("+     DEAUTHER     +");
+  if(debug) Serial.println("\nPrint complete. Initialization core functionalities...\n");
   
 #ifdef USE_DISPLAY
   display.init();
@@ -516,7 +534,36 @@ void loop() {
     if(input == "reset" || input == "reset\n" || input == "reset\r" || input == "reset\r\n"){
       settings.reset();
     }
+    if(input == "wifioff"){
+      stopWifi();
+    }
+    if(input == "wifion"){
+      startWifi();
+    }
+    if(input == "scan"){
+      startAPScan();
+    }
+  if(input == "atatckall"){
+    Serial.println("Scanning all presented APs...");
+  startAPScan();
+    Serial.println("Done.\n");
+  
+    Serial.println("Setting targets...");
+    apScan.selectall();
+    Serial.println("Done.\n");
+  
+    Serial.println("Starting attack...");
+    Serial.println("\n**********input 'stop' to stop attack***********\n");
+  delay(2000);
+    attack.run();
   }
+  if(input == "stop"){
+    attack.stop(0);
+    Serial.println("Stopped.");
+    
+    }
+  }
+
 
 #ifdef USE_DISPLAY
 

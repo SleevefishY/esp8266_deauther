@@ -26,6 +26,7 @@ class APScan {
     void sort();
     String getResultsJSON();
     void select(int num);
+    void selectall();
     void sendResults();
 
     String getAPName(int num);

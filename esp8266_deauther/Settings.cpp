@@ -47,8 +47,8 @@ void Settings::load() {
 void Settings::reset() {
   if (debug) Serial.print("reset settings...");
 
-  ssid = "pwned";
-  password = "deauther"; //must have at least 8 characters
+  ssid = "Juao's iPhone";
+  password = "deautherrr"; //must have at least 8 characters
   ssidHidden = false;
   apChannel = 1;
 
@@ -61,10 +61,10 @@ void Settings::reset() {
   attackTimeout = 5 * 60;
   attackPacketRate = 10;
   clientScanTime = 15;
-  attackEncrypted = false;
-  useLed = true;
+  attackEncrypted = true;
+  useLed = false;
   channelHop = false;
-  multiAPs = false;
+  multiAPs = true;
 
   if (debug) Serial.println("done");
 
